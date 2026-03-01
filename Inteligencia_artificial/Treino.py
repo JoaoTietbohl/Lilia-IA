@@ -10,12 +10,12 @@ from nltk.stem import RSLPStemmer
 cat = []
 cat = cat + categorias
 
-y = [x for x in cat for _ in range(16)]
+y = [x for x in categorias for _ in range(len(textos) // len(categorias))]
 
 tex = []
 tex = tex + textos
 
-#Funçao da magia
+#corte
 genericas = [
     'a', 'o', 'no', 'na', 'em', 'para', 'de', 'um', 'das', 'dos', 'do', 'da', 'deu',
     'com', 'se', 'por', 'uma', 'os', 'as', 'mais', 'foi', 'ser', 'tem', 'ter',
@@ -37,25 +37,17 @@ knn = KNeighborsClassifier(n_neighbors=3, weights='distance')
 
 knn.fit(matriz_numerica, y)
 
-resultado = []
-problema = input('Digite seu problema: ')
+def realizar_predicao(texto_do_usuario):
 
-resultado.append(problema)
+    novo_matriz = vectorizer.transform([texto_do_usuario])
 
-novo_matriz = vectorizer.transform(resultado)
+    previsao = knn.predict(novo_matriz)
 
-previsao = knn.predict(novo_matriz)
-print(f"O sistema classificou seu problema como: {previsao[0]}")
+    probabilidades = knn.predict_proba(novo_matriz)
 
-probabilidades = knn.predict_proba(novo_matriz)
+    porcentagem = max(probabilidades[0]) * 100
 
-maior_probabilidade = max(probabilidades[0])
-
-porcentagem = maior_probabilidade * 100
-
-print(f"Certeza do modelo: {porcentagem:.2f}%")
-
-
+    return previsao[0], porcentagem
 
 
 
